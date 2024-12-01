@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 #include <time.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image/stb_image.h"
@@ -6,13 +7,13 @@
 #include "stb_image/stb_image_write.h"
 #define DEBUG 0
 
-#define ASCII_CHARS "@%#*+=-:. "
+#define ASCII_CHARS " .`-_':;,^\\\"~|<>(){}[]1!il?+*xjrvctzunowmYXJLCOQ0Z@#&%$"
 
 int main() {
   int height, width, channels;
   float startTime = (float)clock() / CLOCKS_PER_SEC; // This returns  processor seconds, it
                                                      // doesn't translate to the real world time
-  unsigned char *input = stbi_load("aperture.jpg", &width, &height, &channels, 3);
+  unsigned char *input = stbi_load("eva.jpg", &width, &height, &channels, 3);
   float endTime = (float)clock() / CLOCKS_PER_SEC;
   if (DEBUG)
     printf("Loading the image took %f seconds\n", endTime - startTime);
@@ -40,7 +41,7 @@ int main() {
 
     float intensity =
         (r * 0.299 + g * 0.587 + 0.114 * b); // human eyes perceieve different colours with different brightness
-    printf("%c", ASCII_CHARS[(int)(intensity / 255 * 10)]);
+    printf("%c", ASCII_CHARS[(int)(intensity / 255 * strlen(ASCII_CHARS))]);
     // *ascii_p = ASCII_CHARS[(int)((float)intensity / 255 * 10)];
     if (count % width == 0) {
       printf("\n");
