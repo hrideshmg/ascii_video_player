@@ -190,7 +190,7 @@ int get_intensity(uint8_t *pixel_ptr) {
 
 int main() {
   struct video_data video_data;
-  char *filename;
+  char filename[20];
 
   printf("Enter filename of the video you wish to play: ");
   scanf("%s", filename);
