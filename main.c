@@ -40,7 +40,9 @@ struct winsize get_window_size() {
 char *convert_frame_to_ascii(struct frame *frame);
 int get_intensity(uint8_t *pixel_ptr);
 struct winsize get_window_size();
+void load_frames(struct video_data *video_data, char *filename);
 void adapt_frame(struct frame *frame);
+void clear_screen(char *ascii_frame);
 
 char *convert_frame_to_ascii(struct frame *frame) {
   size_t image_size = frame->height * frame->width * 3;
@@ -68,11 +70,10 @@ char *convert_frame_to_ascii(struct frame *frame) {
   return ascii_string;
 }
 
-void load_frames(struct video_data *video_data) {
-  char *input_filename = "video.mp4";
+void load_frames(struct video_data *video_data, char *filename) {
   AVFormatContext *format_ctx = NULL;
-  avformat_open_input(&format_ctx, input_filename, NULL, NULL); // automatically detects the format, no special options
-  avformat_find_stream_info(format_ctx, NULL);                  // info about audio and video streams
+  avformat_open_input(&format_ctx, filename, NULL, NULL); // automatically detects the format, no special options
+  avformat_find_stream_info(format_ctx, NULL);            // info about audio and video streams
 
   int video_stream_index = -1;            // to tell that no video stream is found when initialized
   AVCodecParameters *codec_params = NULL; // structure to store info about encoded data
@@ -164,6 +165,19 @@ void adapt_frame(struct frame *frame) {
   frame->height = desired_height;
 }
 
+void clear_screen(char *ascii_frame) {
+  int newline_count = 0;
+  while (*ascii_frame != '\0') {
+    if (*ascii_frame == '\n') {
+      newline_count++;
+    }
+    ascii_frame++;
+  }
+  for (int i = 0; i < newline_count; i++) {
+    printf("\033[A\33[2K\r"); // clear previous line.
+  }
+}
+
 int get_intensity(uint8_t *pixel_ptr) {
   unsigned char r = *pixel_ptr;
   unsigned char g = *(pixel_ptr + 1);
@@ -176,27 +190,21 @@ int get_intensity(uint8_t *pixel_ptr) {
 
 int main() {
   struct video_data video_data;
-  char *ascii_frame_ptr;
-  load_frames(&video_data);
+  char *filename;
+
+  printf("Enter filename of the video you wish to play: ");
+  scanf("%s", filename);
+
+  load_frames(&video_data, filename); // Populate video_data with the necessary data
 
   for (int i = 0; i < video_data.frame_count; i++) {
-    printf("%s", video_data.ascii_frames[i]);
+    char *current_ascii_frame = video_data.ascii_frames[i];
+    printf("%s", current_ascii_frame);
     double time_for_each_frame = 1000 / video_data.frame_rate; // in milliseconds
 
     usleep(time_for_each_frame * 1000); // usleep expects microseconds
+    clear_screen(video_data.ascii_frames[i]);
 
-    int newline_count = 0;
-    ascii_frame_ptr = video_data.ascii_frames[i];
-    while (*ascii_frame_ptr != '\0') {
-      if (*ascii_frame_ptr == '\n') {
-        newline_count++;
-      }
-      ascii_frame_ptr++;
-    }
-    for (int i = 0; i < newline_count; i++) {
-      printf("\033[A\33[2K\r"); // clear previous line.
-    }
-
-    free(video_data.ascii_frames[i]);
+    free(current_ascii_frame);
   }
 }
