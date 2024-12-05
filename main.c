@@ -41,7 +41,7 @@ char *convert_frame_to_ascii(struct frame *frame);
 int get_intensity(uint8_t *pixel_ptr);
 struct winsize get_window_size();
 void load_frames(struct video_data *video_data, char *filename);
-void adapt_frame(struct frame *frame);
+void adapt_frame(struct frame *frame, struct winsize w);
 void clear_screen(char *ascii_frame);
 
 char *convert_frame_to_ascii(struct frame *frame) {
@@ -112,6 +112,7 @@ void load_frames(struct video_data *video_data, char *filename) {
   AVFrame *frame = av_frame_alloc();
   AVPacket *packet = av_packet_alloc();
 
+  struct winsize w = get_window_size();
   while (av_read_frame(format_ctx, packet) >= 0) {
     if (packet->stream_index == video_stream_index) {
       avcodec_send_packet(codec_ctx, packet);
@@ -126,7 +127,7 @@ void load_frames(struct video_data *video_data, char *filename) {
         current_frame.data = rgb_data;
         current_frame.width = frame->width;
         current_frame.height = frame->height;
-        adapt_frame(&current_frame);
+        adapt_frame(&current_frame, w);
 
         *ascii_frame_ptr = convert_frame_to_ascii(&current_frame);
         printf("Finished processing %d frames\r", frame_count);
@@ -149,9 +150,8 @@ void load_frames(struct video_data *video_data, char *filename) {
   avformat_close_input(&format_ctx);
 }
 
-void adapt_frame(struct frame *frame) {
+void adapt_frame(struct frame *frame, struct winsize w) {
   // Resize image to terminal dimensions
-  struct winsize w = get_window_size();
   int desired_width = w.ws_col;
   // int desired_height = desired_width / ((float)width / height); //(Correct aspect ratio calculation)
   int desired_height = w.ws_row;
