@@ -2,6 +2,7 @@
 A tool written in C which lets you play any video (local or with URL) as ASCII text in the terminal. Created as a project for the CSE-201 Procedural Programming in C course.
 
 ## Demo
+https://github.com/user-attachments/assets/e9a8dd83-5fdd-43d1-8c6f-0fb773e63b5f
 
 
 ## Usage
