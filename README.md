@@ -1,19 +1,22 @@
-# ascii_video_player
-A tool which lets you play any videos as ascii text in the terminal. Created as a project for the CSE-201 Procedural Programming in C course.
+# ASCII Video Player
+A tool written in C which lets you play any video (local or with URL) as ASCII text in the terminal. Created as a project for the CSE-201 Procedural Programming in C course.
+
+## Demo
 
 
-# Frame extractor usage :
-- Install the dependencies:
-```
-sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev
-```
-```
-wget https://raw.githubusercontent.com/nothings/stb/master/stb_image_write.h
-```
-- Give the video name with its extension in the program.
-- Compile the program using the command.
-```
-gcc frames_from_video.c -o executable -lavformat -lavcodec -lavutil -lswscale -lm
-```
+## Usage
+- Install the dependencies
 
-- Then execute the `executable` file. New folder `extracted_frames` will be created with the frames of the video.
+  - Ubuntu/Debian:
+    ```
+    sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev
+    ```
+  - Arch:
+    ```
+    sudo pacman -S ffmpeg
+    ```
+- Compile the program ```gcc main.c -o player -lavformat -lavcodec -lavutil -lswscale -lm```
+
+- Then execute the `player` file with `./player`. The program will ask for the name of the file, you can either enter the name of a video file in the same directory or feed it a URL to a video.
+
+**Note**: The video will resize itself to the current dimensions of your terminal, if you wish to have a higher quality output zoom out your terminal before running the program

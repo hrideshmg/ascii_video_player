@@ -1,7 +1,18 @@
 # Prerequisites
 *.d
+
+# Common video file extensions
 *.mp4
-*.jpg
+*.mkv
+*.avi
+*.mov
+*.flv
+*.wmv
+*.webm
+*.mpeg
+*.mpg
+*.3gp
+*.m4v
 
 # Object files
 *.o
